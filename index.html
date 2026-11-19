@@ -10,47 +10,35 @@
 <body>
   <div class="page-shell">
     <header class="app-header">
-      <div class="brand">
-        <span class="brand-badge" aria-hidden="true">QR</span>
-        <h1>CreateQR</h1>
-      </div>
-      <div class="header-actions">
-        <button id="theme-toggle" type="button" class="theme-toggle" aria-label="Cambiar entre modo oscuro y claro" title="Cambiar entre modo oscuro y claro" aria-pressed="false">☀️</button>
-      </div>
+      <h1>CreateQR</h1>
+      <button id="theme-toggle" type="button" class="theme-toggle" aria-label="Cambiar entre modo oscuro y claro" title="Cambiar entre modo oscuro y claro" aria-pressed="false">☀️</button>
     </header>
 
     <main class="workspace">
       <section class="panel controls-panel" aria-label="Configuración del código QR">
         <div class="field-group">
-          <label class="field-label" for="url-input">URL o enlace de destino</label>
+          <label class="field-label" for="url-input">URL</label>
           <input
             id="url-input"
             class="url-input"
             type="url"
-            placeholder="https://tu-sitio.com/ruta"
+            placeholder="https://tu-sitio.com"
             autocomplete="url"
             spellcheck="false"
           >
           <p id="url-hint" class="field-hint"></p>
-          <div class="sample-chips" aria-label="URLs de ejemplo">
-            <span class="chips-label">Probar con:</span>
-            <button type="button" class="chip" data-sample-url="https://github.com/ncarrillo93/CreateQR">Repo CreateQR</button>
-            <button type="button" class="chip" data-sample-url="https://wikipedia.org">Wikipedia</button>
-            <button type="button" class="chip" data-sample-url="https://example.com/?utm_source=qr">URL con parámetros</button>
-          </div>
         </div>
 
         <div class="field-group">
           <div class="section-head">
-            <h2>Gama de Estilos</h2>
-            <span class="section-note">Elige un preset y ajústalo si quieres</span>
+            <h2>Estilo</h2>
           </div>
           <div id="preset-grid" class="preset-grid" role="group" aria-label="Gama de estilos de QR"></div>
         </div>
 
         <div class="field-group">
           <div class="section-head">
-            <h2>Personalización Fina</h2>
+            <h2>Ajustes</h2>
           </div>
 
           <div class="controls-grid">
@@ -104,11 +92,16 @@
               <input id="color-fg2" type="color" value="#4f46e5">
             </label>
 
-            <label class="color-item">
+            <label id="bg-wrap" class="color-item">
               <span>Fondo</span>
               <input id="color-bg" type="color" value="#f8fafc">
             </label>
           </div>
+
+          <label class="toggle-row transparent-toggle">
+            <input id="transparent-bg" type="checkbox">
+            <span>Fondo transparente</span>
+          </label>
         </div>
       </section>
 

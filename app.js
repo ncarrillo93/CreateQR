@@ -213,10 +213,14 @@
       ? '<path d="' + pathData.join('') + '" fill="' + fill + '"/>'
       : '<g fill="' + fill + '">' + shapes.join('') + '</g>';
 
+    var bgRect = opts.transparentBg
+      ? ''
+      : '<rect width="' + total + '" height="' + total + '" fill="' + bg + '"/>';
+
     var svg =
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + total + ' ' + total + '" role="img" aria-label="Código QR generado">' +
       defs +
-      '<rect width="' + total + '" height="' + total + '" fill="' + bg + '"/>' +
+      bgRect +
       eyes +
       modulesMarkup +
       '</svg>';
@@ -266,11 +270,13 @@
       }
     });
 
-    // 3. UTF-8 and empty fallback handling
+    // 3. UTF-8, empty fallback, and transparent background handling
     var fallbackRes = renderQrSvg('', STYLE_PRESETS.classic);
     assert(fallbackRes.size >= 21, 'Fallback para entrada vacía funciona');
     var utf8Res = renderQrSvg('https://ejemplo.com/café-ñandú?q=🚀', STYLE_PRESETS.neon);
     assert(utf8Res.svg.indexOf('<svg ') === 0, 'Soporte UTF-8 funciona');
+    var transparentRes = renderQrSvg('https://ejemplo.com', Object.assign({}, STYLE_PRESETS.classic, { transparentBg: true }));
+    assert(transparentRes.svg.indexOf('width="' + transparentRes.total + '"') === -1, 'Fondo transparente omite rectángulo de fondo');
 
     return 'PASS';
   }
@@ -287,6 +293,8 @@
       fg2: document.getElementById('color-fg2'),
       fg2Wrap: document.getElementById('fg2-wrap'),
       bg: document.getElementById('color-bg'),
+      bgWrap: document.getElementById('bg-wrap'),
+      transparentBg: document.getElementById('transparent-bg'),
       ecLevel: document.getElementById('ec-level'),
       preview: document.getElementById('qr-preview'),
       meta: document.getElementById('qr-meta'),
@@ -325,7 +333,8 @@
     var state = Object.assign({
       url: DEFAULT_URL,
       presetId: 'rounded',
-      ecLevel: 'M'
+      ecLevel: 'M',
+      transparentBg: false
     }, STYLE_PRESETS.rounded);
 
     var lastSvg = '';
@@ -354,6 +363,9 @@
       els.fg2Wrap.classList.toggle('is-disabled', !state.useGradient);
       els.fg2.disabled = !state.useGradient;
       els.bg.value = state.bg;
+      els.transparentBg.checked = Boolean(state.transparentBg);
+      els.bgWrap.classList.toggle('is-disabled', Boolean(state.transparentBg));
+      els.bg.disabled = Boolean(state.transparentBg);
       els.ecLevel.value = state.ecLevel;
 
       var cards = els.presetGrid.querySelectorAll('.preset-card');
@@ -369,17 +381,18 @@
       var target = raw || DEFAULT_URL;
 
       if (!raw) {
-        els.urlHint.textContent = 'Mostrando URL de ejemplo hasta que ingreses la tuya.';
+        els.urlHint.textContent = 'Mostrando enlace de ejemplo.';
       } else if (!isLikelyUrl(raw)) {
-        els.urlHint.textContent = 'Texto libre detectado (consejo: incluye https:// para abrirlo directo como enlace).';
+        els.urlHint.textContent = 'Texto libre (agrega https:// para abrir como enlace).';
       } else {
-        els.urlHint.textContent = 'URL lista para escanear desde cualquier cámara.';
+        els.urlHint.textContent = '';
       }
 
       try {
         var result = renderQrSvg(target, state);
         lastSvg = result.svg;
         els.preview.innerHTML = lastSvg;
+        els.preview.classList.toggle('is-transparent', Boolean(state.transparentBg));
         var presetLabel = state.presetId && STYLE_PRESETS[state.presetId] ? STYLE_PRESETS[state.presetId].name : 'Personalizado';
         els.meta.textContent = presetLabel + ' • ' + result.size + '×' + result.size + ' módulos • Corrección ' + result.ecLevel;
       } catch (err) {
@@ -405,13 +418,10 @@
           '<span class="preset-swatch" style="background:' + preset.bg + '">' +
           '<span class="preset-dot" style="background:' + grad + '"></span>' +
           '</span>' +
-          '<span class="preset-info">' +
-          '<strong class="preset-name">' + preset.name + '</strong>' +
-          '<span class="preset-desc">' + preset.desc + '</span>' +
-          '</span>';
+          '<span class="preset-name">' + preset.name + '</span>';
 
         btn.addEventListener('click', function () {
-          Object.assign(state, preset, { presetId: preset.id });
+          Object.assign(state, preset, { presetId: preset.id, transparentBg: false });
           syncControlsFromState();
           updateQr();
           setStatus('Estilo "' + preset.name + '" aplicado.');
@@ -453,14 +463,6 @@
       updateQr();
     });
 
-    document.querySelectorAll('[data-sample-url]').forEach(function (chip) {
-      chip.addEventListener('click', function () {
-        els.urlInput.value = chip.getAttribute('data-sample-url');
-        state.url = els.urlInput.value;
-        updateQr();
-      });
-    });
-
     function onCustomChange() {
       state.presetId = '';
       state.moduleShape = els.moduleShape.value;
@@ -469,12 +471,13 @@
       state.fg1 = els.fg1.value;
       state.fg2 = els.fg2.value;
       state.bg = els.bg.value;
+      state.transparentBg = els.transparentBg.checked;
       state.ecLevel = els.ecLevel.value;
       syncControlsFromState();
       updateQr();
     }
 
-    [els.moduleShape, els.eyeShape, els.useGradient, els.fg1, els.fg2, els.bg, els.ecLevel].forEach(function (ctrl) {
+    [els.moduleShape, els.eyeShape, els.useGradient, els.fg1, els.fg2, els.bg, els.transparentBg, els.ecLevel].forEach(function (ctrl) {
       ctrl.addEventListener('input', onCustomChange);
       ctrl.addEventListener('change', onCustomChange);
     });
