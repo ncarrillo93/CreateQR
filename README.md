@@ -17,4 +17,4 @@ Generador web **100% standalone** de códigos QR para URLs con gama de estilos v
 
 ## Uso 
 ```
-`https://ncarrillo93.github.io/CreateQR/`.
+<https://ncarrillo93.github.io/CreateQR/>
