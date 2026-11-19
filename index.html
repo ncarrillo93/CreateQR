@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CreateQR — Generador de Códigos QR con Estilos</title>
+  <meta name="description" content="Generador de códigos QR standalone para URLs con gama de estilos personalizables, exportación a PNG y SVG.">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-badge" aria-hidden="true">QR</span>
+        <h1>CreateQR</h1>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle" type="button" class="theme-toggle" aria-label="Cambiar entre modo oscuro y claro" title="Cambiar entre modo oscuro y claro" aria-pressed="false">☀️</button>
+        <span class="pill-badge">Listo para GitHub Pages</span>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="panel controls-panel" aria-label="Configuración del código QR">
+        <div class="field-group">
+          <label class="field-label" for="url-input">URL o enlace de destino</label>
+          <input
+            id="url-input"
+            class="url-input"
+            type="url"
+            placeholder="https://tu-sitio.com/ruta"
+            autocomplete="url"
+            spellcheck="false"
+          >
+          <p id="url-hint" class="field-hint"></p>
+          <div class="sample-chips" aria-label="URLs de ejemplo">
+            <span class="chips-label">Probar con:</span>
+            <button type="button" class="chip" data-sample-url="https://github.com/ncarrillo93/CreateQR">Repo CreateQR</button>
+            <button type="button" class="chip" data-sample-url="https://wikipedia.org">Wikipedia</button>
+            <button type="button" class="chip" data-sample-url="https://example.com/?utm_source=qr">URL con parámetros</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="section-head">
+            <h2>Gama de Estilos</h2>
+            <span class="section-note">Elige un preset y ajústalo si quieres</span>
+          </div>
+          <div id="preset-grid" class="preset-grid" role="group" aria-label="Gama de estilos de QR"></div>
+        </div>
+
+        <div class="field-group">
+          <div class="section-head">
+            <h2>Personalización Fina</h2>
+          </div>
+
+          <div class="controls-grid">
+            <label class="control-item">
+              <span>Forma de módulos</span>
+              <select id="module-shape">
+                <option value="square">Cuadrado clásico</option>
+                <option value="rounded">Redondeado</option>
+                <option value="dots">Puntos (Círculos)</option>
+                <option value="classy">Elegante (Orgánico)</option>
+                <option value="diamond">Diamante (Rombo)</option>
+              </select>
+            </label>
+
+            <label class="control-item">
+              <span>Esquinas (Ojos)</span>
+              <select id="eye-shape">
+                <option value="square">Cuadradas</option>
+                <option value="rounded">Redondeadas</option>
+                <option value="circle">Circulares</option>
+              </select>
+            </label>
+
+            <label class="control-item">
+              <span>Corrección de error</span>
+              <select id="ec-level">
+                <option value="L">Baja (L · 7%)</option>
+                <option value="M" selected>Media (M · 15%)</option>
+                <option value="Q">Alta (Q · 25%)</option>
+                <option value="H">Máxima (H · 30%)</option>
+              </select>
+            </label>
+
+            <label class="control-item checkbox-item">
+              <span>Degradado de color</span>
+              <span class="toggle-row">
+                <input id="use-gradient" type="checkbox">
+                <span>Activar degradado</span>
+              </span>
+            </label>
+          </div>
+
+          <div class="colors-grid">
+            <label class="color-item">
+              <span>Color principal</span>
+              <input id="color-fg1" type="color" value="#1e1b4b">
+            </label>
+
+            <label id="fg2-wrap" class="color-item">
+              <span>Color secundario</span>
+              <input id="color-fg2" type="color" value="#4f46e5">
+            </label>
+
+            <label class="color-item">
+              <span>Fondo</span>
+              <input id="color-bg" type="color" value="#f8fafc">
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel preview-panel" aria-label="Vista previa y descarga">
+        <div class="preview-frame">
+          <div id="qr-preview" class="qr-preview"></div>
+        </div>
+
+        <p id="qr-meta" class="qr-meta"></p>
+
+        <div class="actions-stack">
+          <button id="btn-download-png" type="button" class="btn btn-primary">
+            Descargar PNG (1024px)
+          </button>
+          <div class="actions-row">
+            <button id="btn-download-svg" type="button" class="btn btn-secondary">
+              Descargar SVG
+            </button>
+            <button id="btn-copy-png" type="button" class="btn btn-secondary">
+              Copiar imagen
+            </button>
+          </div>
+        </div>
+
+        <p id="qr-status" class="status-msg" role="status" aria-live="polite"></p>
+      </aside>
+    </main>
+  </div>
+
+  <script src="./vendor/qrcode.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
